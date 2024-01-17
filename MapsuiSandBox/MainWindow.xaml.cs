@@ -121,6 +121,12 @@ namespace MapsuiSandBox
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            var tileLayer = _map.Layers.FindLayer("Polygons").FirstOrDefault();
+            if (tileLayer is not null)
+            {
+                _map.Layers.Remove(tileLayer);
+            }
+
             _map.Layers.Insert(1, new RasterizingTileLayer(CreatePolygonLayer()));
         }
     }
