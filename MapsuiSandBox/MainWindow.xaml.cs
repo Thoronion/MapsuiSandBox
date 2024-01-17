@@ -46,7 +46,6 @@ namespace MapsuiSandBox
 
 
         private Map? _map;
-        private readonly MPoint _startPoint = new(17.667077385900576, 62.31567705489411);
 
         public void Setup(IMapControl mapControl)
         {
@@ -59,8 +58,6 @@ namespace MapsuiSandBox
             _map?.Dispose();
             _map = new Map();
             _map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
-
-            _map.Home = (navigator) => navigator.CenterOnAndZoomTo(SphericalMercator.FromLonLat(_startPoint), navigator.Resolutions[5]);
 
             return _map;
         }
