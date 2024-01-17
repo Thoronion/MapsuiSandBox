@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MapsuiSandBox (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MapsuiSandBox (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
