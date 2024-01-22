@@ -10,7 +10,6 @@
     mc:Ignorable="d">
 
     <Grid>
-        <winui:MapControl x:Name="mapControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-        <Button Background="Black" Content="Test" Click="Button_Click"></Button>
+        <winui:MapControl Grid.Column="1" x:Name="mapControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
     </Grid>
 </Window>
