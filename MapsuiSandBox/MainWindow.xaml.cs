@@ -20,15 +20,24 @@ public sealed partial class MainWindow : Window
 {
     private readonly Map _map = new();
 
+    private readonly Layer _layer;
+    private readonly RasterizingTileLayer _tileLayer;
+
     public MainWindow()
     {
         InitializeComponent();
+        _layer = CreatePolygonLayer();
+        _tileLayer = new(_layer);
 
         _map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        _map.Layers.Add(_tileLayer);
+
+        _map.Home = n => n.ZoomToLevel(9); 
+
         mapControl.Map = _map;
     }
 
-    public static ILayer CreatePolygonLayer()
+    public static Layer CreatePolygonLayer()
     {
         return new Layer("Polygons")
         {
@@ -41,6 +50,30 @@ public sealed partial class MainWindow : Window
     }
 
     private static List<Polygon> CreatePolygon()
+    {
+        var result = new List<Polygon>();
+
+        Polygon polygon1;
+        int factor;
+
+        for (int i = 0; i < 1000; i++)
+        {
+            factor = i - 100 * (int)Math.Round((double)(i / 100));
+            polygon1 = new Polygon(
+                new LinearRing(new[] {
+                new Coordinate(1000*(factor-1), 1000*(factor-1)-(Math.Round((double)(i/100))*1000)),
+                new Coordinate(1000*(factor-1), 1000*(factor)-(Math.Round((double)(i/100))*1000)),
+                new Coordinate(1000*(factor), 1000*(factor)-(Math.Round((double)(i/100))*1000)),
+                new Coordinate(1000*(factor), 1000*(factor-1)-(Math.Round((double)(i/100))*1000)),
+                new Coordinate(1000*(factor-1), 1000*(factor-1)-(Math.Round((double)(i/100))*1000))
+                }));
+
+            result.Add(polygon1);
+        }
+        return result;
+    }
+
+    private static List<Polygon> CreatePolygon2()
     {
         var result = new List<Polygon>();
 
@@ -66,12 +99,14 @@ public sealed partial class MainWindow : Window
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        var tileLayer = _map.Layers.FindLayer("Polygons").FirstOrDefault();
-        if (tileLayer is not null)
+        _layer.Style = new VectorStyle
         {
-            _map.Layers.Remove(tileLayer);
-        }
+            Fill = new Brush(Color.Blue),
+        };
 
-        _map.Layers.Insert(1, new RasterizingTileLayer(CreatePolygonLayer()));
+        _layer.DataSource = new IndexedMemoryProvider(CreatePolygon2().ToFeatures());
+
+        _tileLayer.ClearCache();
+        _map.Refresh();
     }
 }
